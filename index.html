@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quran Quotes</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            background: #f5f0e1;
+            color: #4b2e2e;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+        .card {
+            background: #fffaf0;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+        }
+        .ayah-arabic {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            direction: rtl;
+        }
+        .ayah-english {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        .reference {
+            font-size: 1rem;
+            color: #7b5e5e;
+        }
+        .button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #7b5e5e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background: #5e4545;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="ayah-arabic" id="ayah-arabic">Loading...</div>
+        <div class="ayah-english" id="ayah-english"></div>
+        <div class="reference" id="reference"></div>
+        <button class="button" onclick="fetchAyah()">Load Another Verse</button>
+    </div>
+
+    <script>
+        async function fetchAyah() {
+            try {
+                const response = await fetch('https://api.alquran.cloud/v1/ayah/random/editions/quran-uthmani,en.sahih');
+                const data = await response.json();
+                const arabic = data.data[0].text;
+                const english = data.data[1].text;
+                const surahName = data.data[0].surah.englishName;
+                const ayahNumber = data.data[0].numberInSurah;
+
+                document.getElementById('ayah-arabic').innerText = arabic;
+                document.getElementById('ayah-english').innerText = english;
+                document.getElementById('reference').innerText = `${surahName} (${ayahNumber})`;
+
+            } catch (error) {
+                console.error('Failed to fetch ayah:', error);
+                document.getElementById('ayah-arabic').innerText = 'Error fetching verse.';
+                document.getElementById('ayah-english').innerText = '';
+                document.getElementById('reference').innerText = '';
+            }
+        }
+
+        // Load first ayah on page load
+        fetchAyah();
+    </script>
+</body>
+</html>
